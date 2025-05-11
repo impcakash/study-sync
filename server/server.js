@@ -14,16 +14,28 @@ const userRoutes = require("./routes/users");
 // Create Express app
 const app = express();
 
-// Middleware
+// Allowed origins for CORS
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://study-sync-tau-coral.vercel.app"
+];
+
+// CORS middleware
 app.use(
   cors({
-    origin:
-      process.env.NODE_ENV === "production"
-        ? process.env.CLIENT_URL
-        : "http://localhost:5173",
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like Postman, curl)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS error: Origin ${origin} not allowed`));
+      }
+    },
     credentials: true,
   })
 );
+
+// Middleware to parse JSON
 app.use(express.json());
 
 // Connect to MongoDB
@@ -32,26 +44,24 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((error) =>
-    console.error("MongoDB connection error:", error)
-  );
+  .then(() => console.log("✅ Connected to MongoDB"))
+  .catch((error) => console.error("❌ MongoDB connection error:", error));
 
 // API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/sessions", sessionRoutes);
 app.use("/api/users", userRoutes);
 
-// Error handling middleware
+// Global error handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: "Something went wrong!" });
+  console.error("🔥 Error:", err.message);
+  res.status(500).json({ message: err.message || "Something went wrong!" });
 });
 
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
 
 module.exports = app;
