@@ -1,0 +1,24 @@
+{
+    "name": "studysync",
+    "version": "1.0.0",
+    "description": "StudySync - Collaborative Study Session Scheduler",
+    "main": "server/server.js",
+    "scripts": {
+        "start": "node server/server.js",
+        "server": "npm --prefix server run dev",
+        "client": "npm --prefix client run dev",
+        "dev": "concurrently \"npm run server\" \"npm run client\"",
+        "install-all": "npm install && npm --prefix client install && npm --prefix server install",
+        "build": "npm --prefix client run build",
+        "vercel-build": "npm run install-all && npm run build"
+    },
+    "dependencies": {
+        "concurrently": "^8.2.2"
+    },
+    "devDependencies": {
+        "nodemon": "^3.0.1"
+    },
+    "engines": {
+        "node": ">=16.0.0"
+    }
+}
