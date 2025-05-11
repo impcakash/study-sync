@@ -2,7 +2,6 @@ const dotenv = require("dotenv");
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const path = require("path");
 
 // Load environment variables
 dotenv.config();
@@ -34,21 +33,14 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => console.log("Connected to MongoDB"))
-  .catch((error) => console.error("MongoDB connection error:", error));
+  .catch((error) =>
+    console.error("MongoDB connection error:", error)
+  );
 
 // API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/sessions", sessionRoutes);
 app.use("/api/users", userRoutes);
-
-// Serve static assets in production
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../client/dist")));
-
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "../client/dist", "index.html"));
-  });
-}
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -62,7 +54,4 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-// For Vercel serverless deployment
 module.exports = app;
-
-console.log("MONGODB_URI is:", process.env.MONGODB_URI);
