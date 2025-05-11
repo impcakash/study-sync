@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Create an axios instance with base URL
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000", // Removed /api
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api", // Include /api here
   headers: {
     "Content-Type": "application/json",
   },
@@ -24,12 +24,10 @@ api.interceptors.request.use(
 
 // Add a response interceptor to handle token expiration
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      // Token expired or invalid
+      // Token expired or unauthorized
       localStorage.removeItem("token");
       window.location.href = "/login";
     }
